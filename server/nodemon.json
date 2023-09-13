@@ -1,0 +1,7 @@
+{
+    "env":{
+        "MONGO_USER":"swapnith",
+        "MONGO_PASSWORD":"htinpaws12",
+        "MONGO_DB":"Event_REACT"
+    }
+}
