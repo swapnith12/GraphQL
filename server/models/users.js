@@ -11,7 +11,7 @@ const userschema = new Schema({
         type:String,
         required:true
     },
-    //giving connection to event model.Remember ,user can create any no. of events
+    //giving reference  to event model .Remember ,user can create any no. of events
     createdEvents: [
         {
           type: Schema.Types.ObjectId,
