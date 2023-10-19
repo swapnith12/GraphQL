@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <style>
+        span {
+            animation: rotate 2s linear infinite;
+            
+
+            @keyframes rotate {
+                from {
+                    transform: rotate(0deg);
+                }
+
+                to {
+                    transform: rotate(90deg);
+                }
+            }
+        }
+    </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="https://unpkg.com/htmx.org@1.9.6"
+        integrity="sha384-FhXw7b6AlE/jyjlZH5iHa/tTe9EpJ1Y55RjcgPbjeWMskSxZt1v9qkxLJWNJaGni"
+        crossorigin="anonymous"></script>
+</head>
+
+<body>
+    <div>
+        <table>
+            <thead>
+                <th>title</th>
+                <th>Posts</th>
+            </thead>
+            <tbody>
+                <tr>
+                    <td rowspan="5" id="replaceMe">
+                       data will be here after api fulfilled
+                    </td>
+                    <td>post 1</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <button hx-get="https://dummyjson.com/products/1/" hx-target="#replaceMe" hx-trigger="click">get api 2
+        <span class="htmx-indicator">C</span>
+    </button>
+    
+</body>
+
+</html>
