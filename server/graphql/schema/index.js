@@ -42,7 +42,7 @@ input UserInput {
 }
 
 type RootQuery {
-    events(_id: ID!): [Event!]!
+    events: [Event!]!
     bookings: [Booking!]!
     login(email: String!, password: String!): AuthData!
 }
