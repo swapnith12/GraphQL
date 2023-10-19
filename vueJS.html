@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <div id="app">
+        <h1>Hello Vue JS</h1>
+        <p>{{title}}</p>
+        <p>{{Sorting.value}}</p>
+        <select v-if="json" v-model="Sorting" >
+            <option disabled value="">Sort options</option>
+            <option value="asc">Earlier</option>
+            <option value="dsc">Recent</option>
+        </select>
+        <table v-if="json">
+            <thead>
+                <tr>
+                    <th style="text-align: center; color:red">ID</th>
+                    <th style="text-align: center; color:red">name</th>
+                    <th style="text-align: center; color:red">Time stamp</th>
+                </tr>
+            </thead>
+            <tbody style="align-items: center;">
+                <tr v-else v-for="item in sortedJson" :key="item.id">
+                    <td>{{ item.id }}</td>
+                    <td style="text-align: center; color: rgb(29, 162, 42);">{{ item.name }}</td>
+                    <td style="text-align: center; color:blue">
+                        {{item.timestamp}}
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/dayjs@1/dayjs.min.js"></script>
+    <script type="importmap">
+        {
+          "imports": {
+            "vue": "https://unpkg.com/vue@3/dist/vue.esm-browser.js"
+          }
+        }
+    </script>
+    <script type="module">
+        import { createApp, ref , computed , reactive} from 'vue'
+        createApp({
+            setup() {
+                console.log(dayjs("2023-10-17T12:45:00Z").diff(dayjs("2023-10-17T10:15:30Z"), 'minutes'));
+
+                const title = ref('Hello Vue!')
+                const Sorting = reactive(ref(""))
+                const data = {
+                    "items": [
+                        {
+                            "id": 1,
+                            "name": "Item 1",
+                            "timestamp": "2023-10-17T10:15:30Z"
+                        },
+                        {
+                            "id": 2,
+                            "name": "Item 2",
+                            "timestamp": "2023-10-17T12:45:00Z"
+                        },
+                        {
+                            "id": 3,
+                            "name": "Item 3",
+                            "timestamp": "2023-10-17T14:20:15Z"
+                        },
+                        {
+                            "id": 4,
+                            "name": "Item 4",
+                            "timestamp": "2023-10-17T16:05:45Z"
+                        },
+                        {
+                            "id": 5,
+                            "name": "Item 5",
+                            "timestamp": "2023-10-17T18:30:10Z"
+                        }
+                    ]
+                }
+                const json = ref([...data.items])
+
+                const sortedJson = computed(() => {
+                       console.log(Sorting.value)
+                        if(Sorting.value==="asc"){
+                        return json.value.slice().sort((a, b) => dayjs(a.timestamp).diff(dayjs(b.timestamp)))
+                        }else if(Sorting.value==="dsc"){
+                        return json.value.slice().sort((a, b) => dayjs(b.timestamp).diff(dayjs(a.timestamp)))
+                        }
+                        return json.value
+                })
+
+                console.log(sortedJson.value)
+                return {
+                    title,
+                    data,
+                    json,
+                    sortedJson,
+                    Sorting
+                }
+            }
+        }).mount('#app')
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vue App</title>
+    <script src="https://unpkg.com/vue@3"></script>
+    <script src="https://cdn.jsdelivr.net/npm/dayjs@1/dayjs.min.js"></script>
+</head>
+
+<body>
+    <div id="app">
+        <input type="text" id="urlInput" v-model="url" placeholder="Type endpoint" /><br>
+        <button @click="fetching">Trigger API</button>
+        <h1 v-if="response">You got a response</h1>
+        <h1 v-else>Nothing to show</h1>
+        <h4 v-if="response">Sort messages<span>
+                <select v-model="filter">
+                    <option disabled value="">Sort options</option>
+                    <option value="asc">Earlier</option>
+                    <option value="desc">Recent</option>
+                </select></span></h4>
+        <div v-if="response">
+            <table style="width: 100%;">
+                <thead>
+                    <tr>
+                        <th style="text-align: center; color:red">Author</th>
+                        <th style="text-align: center; color:red">Subject</th>
+                        <th style="text-align: center; color:red">Post On</th>
+                        <th style="text-align: center; color:red">Post time</th>
+                    </tr>
+                </thead>
+                <tbody style="align-items: center;">
+                    <tr v-for="item in sortedResponse" :key="item.id">
+                        <td>{{ item.author.login }}</td>
+                        <td style="text-align: center; color: rgb(29, 162, 42);">{{ item.subject }}</td>
+                        <td>{{ item.conversation.last_post_time_friendly }}</td>
+                        <td style="text-align: center; color:blue">
+                            {{ item.post_time }}
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <ul style="display: flex; justify-content: center; list-style-type: none;">
+                <li v-if="disabledPrev"><button disabled @click="PrevPage" style="margin-right: 10px;">prev..</button>
+                </li>
+                <li v-else><button @click="PrevPage" style="margin-right: 10px;">prev..</button></li>
+                <li><button @click="firstPage" style="margin-right: 10px;">1</button></li>
+                <li><button @click="secondPage" style="margin-right: 10px;">2</button></li>
+                <li v-if="disabledNext"><button disabled @click="NextPage" style="margin-right: 10px;">Next</button>
+                </li>
+                <li v-else><button @click="NextPage" style="margin-right: 10px;">Next</button></li>
+                
+            </ul>
+        </div>
+
+    </div>
+    <script>
+        const { ref, computed, reactive } = Vue
+        const app = Vue.createApp({
+            setup() {
+                const url = ref('');
+                const response = ref(null);
+                const filter = reactive(ref(''));
+                const limit = reactive(ref(5))
+                const page = reactive(ref(1))
+                const disabledPrev = reactive(ref(page.value === 1 ? true : false))
+                const disabledNext = reactive(ref(page.value === 5 ? true : false))
+
+                const fetching = async function () {
+                    const res = await fetch(`https://italent2.demo.lithium.com/api/2.0/search?q=SELECT%20*%20FROM%20messages%20limit%20${limit.value}%20offset%20${page.value}`);
+                    const data = await res.json();
+                    response.value = data;
+                }
+
+                const NextPage = () => {
+                    if (page.value >= 1 && page.value < 5) {
+                        console.log("page", page.value)
+                        page.value = page.value + 1
+                        console.log("page + 1", page.value)
+                        console.log("sortedList Length" , sortedResponse.value.length)
+                        fetching()
+                        disabledPrev.value = false
+                        if(page.value === 5){
+                            page.value=page.value+1
+                            disabledNext.value=true 
+                            fetching()}
+                    }
+                    else if (page.value===6){
+                        disabledNext.value=true
+                    }
+                    else {
+                        disabledPrev.value = true
+                    }
+                }
+
+                const PrevPage = () => {
+                    if (page.value > 1) {
+                        console.log("prev", page)
+                        page.value = page.value - 1
+                        fetching()
+                        disabledNext.value=false
+                    }
+                    if (page.value === 1) {
+                        disabledPrev.value = true;
+                    }
+                }
+
+                const firstPage = () => {
+                    page.value = 1
+                    fetching()
+                    disabledPrev.value = true
+                }
+
+                const secondPage = () => {
+                    page.value = 2
+                    fetching()
+                    disabledPrev.value = false
+                }
+
+                const sortedResponse = computed(() => {
+                    const items = [...response.value.data.items];
+                    if (filter.value === "asc") {
+                        return items.slice().sort((a, b) => dayjs(a.post_time).diff(dayjs(b.post_time)));
+                    } else if (filter.value === "desc") {
+                        return items.slice().sort((a, b) => dayjs(b.post_time).diff(dayjs(a.post_time)));
+                    }
+                    return items;
+                });
+
+                return {
+                    url,
+                    response,
+                    fetching,
+                    sortedResponse,
+                    filter,
+                    NextPage,
+                    PrevPage,
+                    firstPage,
+                    secondPage,
+                    disabledPrev
+                };
+            }
+        });
+
+        app.mount('#app');
+    </script>
+</body>
+
+</html>
