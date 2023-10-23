@@ -1,19 +1,24 @@
 import React from 'react'
 import Sidebar from './sideBar'
 import CardItems from './CardItems'
+import { Outlet } from 'react-router-dom'
 
 interface Layout {
-    
+
 }
 
 
 const Layout: React.FC<Layout> = (props) => {
   return (
     <div>
-        <Sidebar/>
-        <main className='ml-3'>
-        <CardItems/>
-        </main>
+      <Sidebar />
+      {/*Banner*/}
+      <main className='p-3'>
+        {/* <CardItems/> */}
+        <div className='flex flex-row justify-content-around'>
+        <Outlet/>
+        </div>
+      </main>
     </div>
   )
 }
