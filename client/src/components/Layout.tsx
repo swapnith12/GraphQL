@@ -1,14 +1,13 @@
-import React from 'react'
+import React , {useEffect} from 'react'
 import Sidebar from './sideBar'
-import CardItems from './CardItems'
-import { Outlet } from 'react-router-dom'
+import { Outlet } from '@tanstack/react-router'
 
 interface Layout {
-
+  
 }
 
-
 const Layout: React.FC<Layout> = (props) => {
+
   return (
     <div>
       <Sidebar />

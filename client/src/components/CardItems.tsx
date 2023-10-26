@@ -1,11 +1,11 @@
 import React from 'react'
 
-interface CardItems {
+type PropsItems = {
 
 }
 
 
-const CardItems: React.FC<CardItems> = (props) => {
+ const CardItems: React.FC<PropsItems> = (props) => {
   return (
 
     <div className='ml-40 flex flex-row justify-between gap-3'>
@@ -31,5 +31,6 @@ const CardItems: React.FC<CardItems> = (props) => {
     </div>
   )
 }
+
 
 export default CardItems

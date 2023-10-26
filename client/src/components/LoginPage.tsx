@@ -1,28 +1,68 @@
-import React, { useRef, useState } from 'react'
-import { Interface } from 'readline'
+import React, { useEffect, useRef, useState } from 'react'
 import { Button, Form, Grid, Header, Image, Message, Segment } from 'semantic-ui-react'
 import 'semantic-ui-css/semantic.min.css'
-import { type } from 'os'
+import { useNavigate} from '@tanstack/react-router'
+import { useAuth } from './auth'
 
 interface LoginPage {
 
 }
 
-const LoginPage: React.FC<LoginPage> = (props) => {
-  const [registered, setRegistered] = useState(true)
-  const [email,setEmail] = useState('')
-  const [password,setPassword] = useState('')
+const LoginPage: React.FC<LoginPage> = () => {
+  const navigate = useNavigate()
+  const [registered, setRegistered] = useState(false)
+  const auth = useAuth()
+
+  const handleLogin = (args:any)=>{
+    auth.login(args)
+    navigate({
+      to:'/',
+    } )
+  }
 
 
   const loginOptions = () => {
     setRegistered(!registered)
   }
+  const login = (e: React.FormEvent) => {
+    e.preventDefault()
+    const formData = new FormData(e.target as HTMLFormElement)
+    const Email = formData.get('login-Email') as String
+    const Password = formData.get('login-Password') as String
+    if(Email.trim().length===0 || Password.trim().length===0){return}
+
+    let requestBody = {
+      query: `
+        query {
+          login(email: "${Email}", password: "${Password}") {
+            userId
+            token
+            tokenExpiration
+          }
+        }
+      `
+    };
+
+    fetch('http://localhost:4000/graphql',{
+      method:'POST',
+      body:JSON.stringify(requestBody),
+      headers:{'Content-Type':'application/json'}
+    }).then(res=>{
+      if(res.status !== 200 && res.status !== 201){
+        throw new Error('Failed')
+      }
+      return res.json()
+    })
+    .then(data=>handleLogin(data.data.login.token))
+    .catch(err=>console.log(err))
+  }
+
   const signUp = (e: React.FormEvent) => {
     e.preventDefault()
     const formData = new FormData(e.target as HTMLFormElement)
     const Email = formData.get('Email') as String
     const Password = formData.get('Password') as String
-    if(Email.trim().length===0 || Password.trim().length===0){return}
+    if(Email?.trim().length===0 || Password?.trim().length===0){return}
     console.log(Email,Password,"new creds")
     const requestBody = {
       query: `
@@ -46,6 +86,9 @@ const LoginPage: React.FC<LoginPage> = (props) => {
       return res.json()
     }).then(data=>console.log(data))
     .catch(err=>console.log(err))
+
+    formData.set("Email","")
+    formData.set("Password","")
   }
   
 
@@ -58,18 +101,20 @@ const LoginPage: React.FC<LoginPage> = (props) => {
             <Header as='h2' style={{ color: "#00BCD4" }} textAlign='center'>
               <Image src='https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTewZ_BwQjeHlSXtmxPqsDqNUuxBRnu2JG0xg&usqp=CAU' /> Log-in to your account
             </Header>
-            <Form size='large' >
+            <Form size='large' onSubmit={login} >
               <Segment stacked>
-                <Form.Input fluid icon='user' iconPosition='left' placeholder='E-mail address' />
+                <Form.Input fluid icon='user' iconPosition='left' placeholder='E-mail address'
+                name="login-Email" />
                 <Form.Input
                   fluid
                   icon='lock'
                   iconPosition='left'
                   placeholder='Password'
                   type='password'
+                  name='login-Password'
                 />
 
-                <Button style={{ backgroundColor: "#7FFFD4" }} fluid size='large'>
+                <Button  style={{ backgroundColor: "#7FFFD4" }} fluid size='large'>
                   Login
                 </Button>
               </Segment>
