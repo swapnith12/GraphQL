@@ -35,7 +35,7 @@ const rootRoute = new RootRoute({
 const indexRoute = new Route({
   getParentRoute: ()=>rootRoute,
   path:'/',
-  component: ()=> <Banner/>
+  component: ()=>  <Banner/>
 })
 
 const CardItemsRoute  = new Route({

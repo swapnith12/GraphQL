@@ -10,6 +10,7 @@ interface SidebarProps {
 const Sidebar: React.FC<SidebarProps> = (props) => {
   const auth = useAuth()
   const token = auth.token
+
   return (
     <div id="sideBar" className='fixed min-h-screen max-h-full bg-gradient-to-b from-cyan-500 to-blue-300 w-40 p-1 flex flex-col'>
       <header>
@@ -23,13 +24,20 @@ const Sidebar: React.FC<SidebarProps> = (props) => {
       </header>
       <footer className='mt-auto' >
         <div>
-          <Link  to="/register">
+        {token?<Link  to="/register" onClick={()=>auth.logout()}>
             <span className='flex flex-row justify-center items-center rounded-full
              bg-blue-300 hover:bg-cyan-500 active:bg-violet-700 focus:outline-none focus:ring focus:ring-violet-300'>
               <FaUserNinja className='text-3xl text-white' />
-              {token?<p className='text-white font-bold text-3xl'>Log Out</p>:<p className='text-white font-bold text-3xl'>LogIn</p>}
+              <p className='text-white font-bold text-3xl'>Log Out</p>
             </span>
-            </Link>
+            </Link> :
+             <Link  to="/register">
+            <span className='flex flex-row justify-center items-center rounded-full
+             bg-blue-300 hover:bg-cyan-500 active:bg-violet-700 focus:outline-none focus:ring focus:ring-violet-300'>
+              <FaUserNinja className='text-3xl text-white' />
+              <p className='text-white font-bold text-3xl'>LogIn</p>
+            </span>
+            </Link> }
         </div>
       </footer>
     </div>

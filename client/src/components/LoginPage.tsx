@@ -17,8 +17,10 @@ const LoginPage: React.FC<LoginPage> = () => {
     auth.login(args)
     navigate({
       to:'/',
-    } )
+      replace:true,
+    })
   }
+
 
 
   const loginOptions = () => {

@@ -1,4 +1,5 @@
 import React from 'react'
+import Hoc from './Hoc'
 
 interface BannerItems {
     
