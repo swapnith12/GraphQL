@@ -1,4 +1,5 @@
 import React , {Children, createContext , useState} from 'react'
+import { theme } from '../Theme';
 
 const AuthContext = createContext<any>({});
 
@@ -8,6 +9,7 @@ type IPauthProps = {
 
 export const AuthProvider:React.FC<IPauthProps> = ({children})=> {
     const [token , setToken] = useState<string | null>(null)
+    const [DarkMode , setDarkMode] = useState(false)
     
     const login=(token:any)=>{
        localStorage.setItem('token',token)
@@ -18,9 +20,14 @@ export const AuthProvider:React.FC<IPauthProps> = ({children})=> {
         localStorage.removeItem('token')
         setToken('')
     }
+ 
+    const changeMode = () =>{
+      setDarkMode((prevMode)=>!prevMode)
+      console.log(DarkMode)
+    }
 
   return (
-    <AuthContext.Provider value={{token , login , logout}}>
+    <AuthContext.Provider value={{token , login , logout , theme , changeMode , DarkMode}}>
       {children}
     </AuthContext.Provider>
   )
